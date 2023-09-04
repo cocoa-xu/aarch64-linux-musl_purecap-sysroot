@@ -21,7 +21,7 @@ concurrency:
 jobs:
   build:
     if: "!contains(github.event.pull_request.labels.*.name, 'skip ci')"
-    runs-on: ubuntu-20.04
+    runs-on: self-hosted
     env:
       MORELLOIE_DOWNLOAD_URL: "https://developer.arm.com/-/media/Arm%20Developer%20Community/Downloads/Morello/Development%20Tools/Morello%20Instruction%20Emulator"
       MORELLOIE_VERSION: "2.3-533"
