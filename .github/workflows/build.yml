@@ -96,9 +96,6 @@ jobs:
 
       - name: Create tarball
         run: |
-          pushd ${HOME}/musl
-          export COMMIT_HASH=$(git rev-parse --short HEAD)
-          popd
           cd ${HOME}/musl-sysroot-purecap
           tar -czf /tmp/musl-sysroot-purecap.tar.gz .
 
