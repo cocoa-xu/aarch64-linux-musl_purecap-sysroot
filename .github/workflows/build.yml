@@ -100,9 +100,10 @@ jobs:
           export COMMIT_HASH=$(git rev-parse --short HEAD)
           popd
           cd ${HOME}/musl-sysroot-purecap
-          tar -czf /tmp/musl-sysroot-purecap-${COMMIT_HASH}.tar.gz .
+          tar -czf /tmp/musl-sysroot-purecap.tar.gz .
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v2.2.4
         with:
-          path: /tmp/musl-sysroot-purecap*.tar.gz
+          name: musl-sysroot-purecap.tar.gz
+          path: /tmp/musl-sysroot-purecap.tar.gz
