@@ -85,6 +85,8 @@ jobs:
       - name: Build Musl Sysroot for Purecap
         run: |
           export MUSL_PREFIX_PURECAP=${HOME}/musl-sysroot-purecap
+          export MUSL_SOURCES=${HOME}/musl
+          export LLVM_PREFIX=${HOME}/llvm
           pushd ${MUSL_SOURCES}
           make distclean
           CC=${LLVM_PREFIX}/bin/clang ./configure --prefix=${MUSL_PREFIX_PURECAP} --target=aarch64-linux-musl_purecap
