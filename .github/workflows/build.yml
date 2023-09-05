@@ -114,5 +114,6 @@ jobs:
           tar -czf /tmp/musl-sysroot-hybrid.tar.gz .
 
       - uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
         with:
           files: /tmp/musl-sysroot-*.tar.gz

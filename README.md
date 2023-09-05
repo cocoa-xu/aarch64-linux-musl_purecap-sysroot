@@ -1,2 +1,2 @@
-# aarch64-linux-musl_purecap-sysroot
+# aarch64c-linux-sysroot
 Build musl sysroot for purecap and hybrid.
