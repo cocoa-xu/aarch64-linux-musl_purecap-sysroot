@@ -94,13 +94,25 @@ jobs:
           make install
           popd
 
+      - name: Build Musl Sysroot for Hybrid
+        run: |
+          export MUSL_PREFIX_HYBRID=${HOME}/musl-sysroot-hybrid
+          export MUSL_SOURCES=${HOME}/musl
+          export LLVM_PREFIX=${HOME}/llvm
+          pushd ${MUSL_SOURCES}
+          make distclean
+          CC=${LLVM_PREFIX}/bin/clang ./configure --prefix=${MUSL_PREFIX_HYBRID} --disable-morello --target=aarch64-linux-gnu
+          make -j`nproc`
+          make install
+          popd
+
       - name: Create tarball
         run: |
           cd ${HOME}/musl-sysroot-purecap
           tar -czf /tmp/musl-sysroot-purecap.tar.gz .
+          cd ${HOME}/musl-sysroot-hybrid
+          tar -czf /tmp/musl-sysroot-hybrid.tar.gz .
 
-      - name: Upload build artifacts
-        uses: actions/upload-artifact@v2.2.4
+      - uses: softprops/action-gh-release@v1
         with:
-          name: musl-sysroot-purecap.tar.gz
-          path: /tmp/musl-sysroot-purecap.tar.gz
+          files: /tmp/musl-sysroot-*.tar.gz
