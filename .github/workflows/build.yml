@@ -108,22 +108,22 @@ jobs:
         id: cache-morello-llvm
         uses: actions/cache@v3
         with:
-          key: morello-llvm-${{ steps.parse-versions.outputs.morello_llvm_version }}
+          key: morello-llvm-linux-aarch64-${{ steps.parse-versions.outputs.morello_llvm_version }}
           path: |
-            ./morello-llvm-linux-${{ steps.parse-versions.outputs.morello_llvm_version }}.tar.gz
+            ./morello-llvm-linux-aarch64-${{ steps.parse-versions.outputs.morello_llvm_version }}.tar.gz
 
       - name: Download Morello LLVM
         if: steps.cache-morello-llvm.outputs.cache-hit != 'true'
         run: |
           export MORELLO_LLVM_VERSION="${{ steps.parse-versions.outputs.morello_llvm_version }}"
-          curl -fSL "https://git.morello-project.org/morello/llvm-project-releases/-/archive/morello/linux-release-${MORELLO_LLVM_VERSION}/llvm-project-releases-morello-linux-release-${MORELLO_LLVM_VERSION}.tar.gz" -o "morello-llvm-linux-${MORELLO_LLVM_VERSION}.tar.gz"
+          curl -fSL "https://git.morello-project.org/morello/llvm-project-releases/-/archive/morello/linux-aarch64-release-${MORELLO_LLVM_VERSION}/llvm-project-releases-morello-linux-aarch64-release-${MORELLO_LLVM_VERSION}.tar.gz" -o "morello-llvm-linux-aarch64-${MORELLO_LLVM_VERSION}.tar.gz"
 
       - name: Install Morello LLVM
         run: |
           export LLVM_PREFIX=${HOME}/llvm
           rm -rf ${LLVM_PREFIX}
           mkdir -p ${LLVM_PREFIX}
-          tar -xf "morello-llvm-linux-${{ steps.parse-versions.outputs.morello_llvm_version }}.tar.gz" -C ${LLVM_PREFIX} --strip-components=1
+          tar -xf "morello-llvm-linux-aarch64-${{ steps.parse-versions.outputs.morello_llvm_version }}.tar.gz" -C "${LLVM_PREFIX}" --strip-components=1
 
       - name: Checkout musl source code if not exists
         run: |
