@@ -22,9 +22,9 @@ jobs:
           NO_PREFIX="${MORELLOIE_FILENAME#morelloie-}"
           export MORELLOIE_VERSION="${NO_PREFIX%%.tgz.sh}"
 
-          MORELLO_LLVM_FILENAME="$(curl -fsSL "https://git.morello-project.org/morello/llvm-project-releases/-/raw/main/README.md?ref_type=heads" | grep -o -e 'morello-llvm-linux-[0-9.]*.tar.gz')"
+          MORELLO_LLVM_FILENAME="$(curl -fsSL "https://git.morello-project.org/morello/llvm-project-releases/-/raw/main/README.md?ref_type=heads" | grep -o -e 'morello-llvm-linux-aarch64-[0-9.]*.tar.gz')"
           echo "Using morello LLVM filename: ${MORELLO_LLVM_FILENAME}"
-          NO_PREFIX="${MORELLO_LLVM_FILENAME#morello-llvm-linux-}"
+          NO_PREFIX="${MORELLO_LLVM_FILENAME#morello-llvm-linux-aarch64-}"
           export MORELLO_LLVM_VERSION="${NO_PREFIX%%.tar.gz}"
 
           rm -rf musl-libc
