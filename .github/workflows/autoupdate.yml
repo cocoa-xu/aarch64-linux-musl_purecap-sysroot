@@ -27,13 +27,20 @@ jobs:
           NO_PREFIX="${MORELLO_LLVM_FILENAME#morello-llvm-linux-}"
           export MORELLO_LLVM_VERSION="${NO_PREFIX%%.tar.gz}"
 
+          rm -rf musl-libc
+          git clone --depth=1 https://git.morello-project.org/morello/musl-libc.git
+          cd musl-libc
+          MUSL_VERSION="$(git rev-parse --short HEAD)"
+
           echo "Latest morelloie version: ${MORELLOIE_VERSION}"
           echo "Latest morello LLVM version: ${MORELLO_LLVM_VERSION}"
+          echo "Latest musl version: ${MUSL_VERSION}"
 
           echo "morelloie_version=${MORELLOIE_VERSION}" >> $GITHUB_OUTPUT
           echo "morello_llvm_version=${MORELLO_LLVM_VERSION}" >> $GITHUB_OUTPUT
+          echo "musl_version=${MUSL_VERSION}" >> $GITHUB_OUTPUT
 
-          TAG_NAME="v${MORELLOIE_VERSION}+${MORELLO_LLVM_VERSION}"
+          TAG_NAME="v${MORELLOIE_VERSION}+${MORELLO_LLVM_VERSION}+${MUSL_VERSION}"
           echo "tag=${TAG_NAME}" >> $GITHUB_OUTPUT
 
       - name: Check if tag exists

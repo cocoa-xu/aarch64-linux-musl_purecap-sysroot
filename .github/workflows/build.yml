@@ -29,7 +29,6 @@ jobs:
     runs-on: self-hosted
     env:
       MORELLOIE_DOWNLOAD_URL: "https://developer.arm.com/-/media/Arm%20Developer%20Community/Downloads/Morello/Development%20Tools/Morello%20Instruction%20Emulator"
-      MUSL_GITREF: "morello/master"
 
     steps:
       - name: Checkout
@@ -48,8 +47,9 @@ jobs:
           case "${{ github.ref }}" in
             refs/tags/*)
               VERSIONS="${REF#v}"
-              export MORELLOIE_VERSION="${VERSIONS%%+*}"
-              export MORELLO_LLVM_VERSION="${VERSIONS#*+}"
+              export MORELLOIE_VERSION="$(cho $VERSIONS | cut -d+ -f 1)"
+              export MORELLO_LLVM_VERSION="$(echo $VERSIONS | cut -d+ -f 2)"
+              export MUSL_VERSION="$(echo $VERSIONS | cut -d+ -f 3)"
               ;;
             *)
               MORELLOIE_FILENAME="$(curl -fsSL "https://developer.arm.com/downloads/-/morello-instruction-emulator" | grep -o -e 'Download morelloie-.*.sh' | cut -d ' ' -f 2 | sort -nr | head -n1)"
@@ -61,14 +61,27 @@ jobs:
               echo "Using morello LLVM filename: ${MORELLO_LLVM_FILENAME}"
               NO_PREFIX="${MORELLO_LLVM_FILENAME#morello-llvm-linux-}"
               export MORELLO_LLVM_VERSION="${NO_PREFIX%%.tar.gz}"
+
+              export ROOT_DIR="$(pwd)"
+              export MUSL_SOURCES=${HOME}/musl
+              rm -rf ${MUSL_SOURCES}
+              mkdir -p ${MUSL_SOURCES}
+              git clone --depth=1 https://git.morello-project.org/morello/musl-libc.git "${MUSL_SOURCES}"
+              cd "${MUSL_SOURCES}"
+              export MUSL_VERSION="$(git rev-parse --short HEAD)"
+              if [ ! -d "${HOME}/musl-${MUSL_VERSION}" ]; then
+                mv "${MUSL_SOURCES}" "${MUSL_SOURCES}-${MUSL_VERSION}"
+              fi
               ;;
           esac
 
           echo "Using morelloie version: ${MORELLOIE_VERSION}"
           echo "Using morello LLVM version: ${MORELLO_LLVM_VERSION}"
+          echo "Using musl version: ${MUSL_VERSION}"
 
           echo "morelloie_version=${MORELLOIE_VERSION}" >> $GITHUB_OUTPUT
           echo "morello_llvm_version=${MORELLO_LLVM_VERSION}" >> $GITHUB_OUTPUT
+          echo "musl_version=${MUSL_VERSION}" >> $GITHUB_OUTPUT
 
       - name: Cache Morello IE
         id: cache-morelloie
@@ -104,23 +117,19 @@ jobs:
           git checkout origin/${branch} -b ${branch}
           popd
 
-      - name: Checkout Musl sources
+      - name: Checkout musl source code if not exists
         run: |
-          export MUSL_SOURCES=${HOME}/musl
-          rm -rf ${MUSL_SOURCES}
-          mkdir -p ${MUSL_SOURCES}
-          pushd ${MUSL_SOURCES}
-          git init
-          repo=https://git.morello-project.org/morello/musl-libc.git
-          gitref=${MUSL_GITREF}
-          git fetch -- ${repo} +refs/heads/${gitref}:refs/remotes/origin/${gitref}
-          git checkout origin/${gitref} -b ${gitref}
-          popd
+          export MUSL_SOURCES="${HOME}/musl-${{ steps.parse-versions.outputs.musl_version }}"
+          if [ ! -d "${MUSL_SOURCES}" ]; then
+            git clone --depth=1 https://git.morello-project.org/morello/musl-libc.git "${MUSL_SOURCES}"
+            cd "${MUSL_SOURCES}"
+            git checkout "${{ steps.parse-versions.outputs.musl_version }}"
+          fi
 
       - name: Build Musl Sysroot for Purecap
         run: |
           export MUSL_PREFIX_PURECAP=${HOME}/musl-sysroot-purecap
-          export MUSL_SOURCES=${HOME}/musl
+          export MUSL_SOURCES="${HOME}/musl-${{ steps.parse-versions.outputs.musl_version }}"
           export LLVM_PREFIX=${HOME}/llvm
           pushd ${MUSL_SOURCES}
           make distclean
@@ -132,7 +141,7 @@ jobs:
       - name: Build Musl Sysroot for Hybrid
         run: |
           export MUSL_PREFIX_HYBRID=${HOME}/musl-sysroot-hybrid
-          export MUSL_SOURCES=${HOME}/musl
+          export MUSL_SOURCES="${HOME}/musl-${{ steps.parse-versions.outputs.musl_version }}"
           export LLVM_PREFIX=${HOME}/llvm
           pushd ${MUSL_SOURCES}
           make distclean
