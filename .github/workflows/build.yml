@@ -46,7 +46,8 @@ jobs:
         run: |
           case "${{ github.ref }}" in
             refs/tags/*)
-              VERSIONS="${REF#v}"
+              GITHUB_REF="${{ github.ref }}"
+              VERSIONS="${GITHUB_REF#refs/tags/v}"
               export MORELLOIE_VERSION="$(echo $VERSIONS | cut -d+ -f 1)"
               export MORELLO_LLVM_VERSION="$(echo $VERSIONS | cut -d+ -f 2)"
               export MUSL_VERSION="$(echo $VERSIONS | cut -d+ -f 3)"
