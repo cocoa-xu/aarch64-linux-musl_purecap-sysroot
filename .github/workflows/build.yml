@@ -163,11 +163,15 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/')
         run: |
           cd ${HOME}/musl-sysroot-purecap
+          rm -f /tmp/musl-sysroot-purecap.tar.gz
           tar -czf /tmp/musl-sysroot-purecap.tar.gz .
           cd ${HOME}/musl-sysroot-hybrid
+          rm -f /tmp/musl-sysroot-hybrid.tar.gz
           tar -czf /tmp/musl-sysroot-hybrid.tar.gz .
 
       - uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
         with:
-          files: /tmp/musl-sysroot-*.tar.gz
+          files: |
+            /tmp/musl-sysroot-purecap.tar.gz
+            /tmp/musl-sysroot-hybrid.tar.gz
