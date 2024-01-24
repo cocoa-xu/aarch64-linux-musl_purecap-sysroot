@@ -54,16 +54,18 @@ jobs:
             *)
               MORELLOIE_FILENAME="$(curl -fsSL "https://developer.arm.com/downloads/-/morello-instruction-emulator" | grep -o -e 'Download morelloie-.*.sh' | cut -d ' ' -f 2 | sort -nr | head -n1)"
               echo "Using morelloie filename: ${MORELLOIE_FILENAME}"
-              export MORELLOIE_VERSION="${${MORELLOIE_FILENAME#morelloie-}%.tgz.sh}"
+              NO_PREFIX="${MORELLOIE_FILENAME#morelloie-}"
+              export MORELLOIE_VERSION="${NO_PREFIX%%.tgz.sh}"
 
-              MORELLO_LLVM_FILENAME="$(curl -fsSL https://git.morello-project.org/morello/llvm-project-releases/-/raw/main/README.md\?ref_type\=heads | grep -o -e 'morello-llvm-linux-[0-9.]*.tar.gz')"
+              MORELLO_LLVM_FILENAME="$(curl -fsSL "https://git.morello-project.org/morello/llvm-project-releases/-/raw/main/README.md?ref_type=heads" | grep -o -e 'morello-llvm-linux-[0-9.]*.tar.gz')"
               echo "Using morello LLVM filename: ${MORELLO_LLVM_FILENAME}"
-              export MORELLO_LLVM_VERSION="${${MORELLO_LLVM_FILENAME#morello-llvm-linux-}%.tar.gz}"
+              NO_PREFIX="${MORELLO_LLVM_FILENAME#morello-llvm-linux-}"
+              export MORELLO_LLVM_VERSION="${NO_PREFIX%%.tar.gz}"
               ;;
           esac
 
           echo "Using morelloie version: ${MORELLOIE_VERSION}"
-          echo "Using morelloie LLVM version: ${MORELLO_LLVM_VERSION}"
+          echo "Using morello LLVM version: ${MORELLO_LLVM_VERSION}"
 
           echo "morelloie_version=${MORELLOIE_VERSION}" >> $GITHUB_OUTPUT
           echo "morello_llvm_version=${MORELLO_LLVM_VERSION}" >> $GITHUB_OUTPUT
