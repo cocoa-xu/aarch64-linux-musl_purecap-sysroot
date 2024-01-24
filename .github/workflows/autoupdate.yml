@@ -18,9 +18,9 @@ jobs:
         id: latest-version
         run: |
           MORELLOIE_FILENAME="$(curl -fsSL "https://developer.arm.com/downloads/-/morello-instruction-emulator" | grep -o -e 'Download morelloie-.*.sh' | cut -d ' ' -f 2 | sort -nr | head -n1)"
-          MORELLOIE_VERSION="$(echo ${${MORELLOIE_VERSION#morelloie-}%.tgz.sh})"
+          export MORELLOIE_VERSION="${${MORELLOIE_FILENAME#morelloie-}%.tgz.sh}"
           MORELLO_LLVM_FILENAME="$(curl -fsSL https://git.morello-project.org/morello/llvm-project-releases/-/raw/main/README.md\?ref_type\=heads | grep -o -e 'morello-llvm-linux-[0-9.]*.tar.gz')"
-          MORELLO_LLVM_VERSION="$(echo ${${MORELLO_LLVM_FILENAME#morello-llvm-linux-}%.tar.gz})"
+          export MORELLO_LLVM_VERSION="${${MORELLO_LLVM_FILENAME#morello-llvm-linux-}%.tar.gz}"
 
           echo "Latest morelloie version: ${MORELLOIE_VERSION}"
           echo "Latest morelloie LLVM version: ${MORELLO_LLVM_VERSION}"
