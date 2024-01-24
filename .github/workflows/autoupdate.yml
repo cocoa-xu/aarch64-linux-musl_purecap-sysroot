@@ -40,7 +40,7 @@ jobs:
           echo "morello_llvm_version=${MORELLO_LLVM_VERSION}" >> $GITHUB_OUTPUT
           echo "musl_version=${MUSL_VERSION}" >> $GITHUB_OUTPUT
 
-          TAG_NAME="v${MORELLOIE_VERSION}+${MORELLO_LLVM_VERSION}+${MUSL_VERSION}"
+          TAG_NAME="v${MORELLOIE_VERSION}_${MORELLO_LLVM_VERSION}_${MUSL_VERSION}"
           echo "tag=${TAG_NAME}" >> $GITHUB_OUTPUT
 
       - name: Check if tag exists

@@ -48,9 +48,9 @@ jobs:
             refs/tags/*)
               GITHUB_REF="${{ github.ref }}"
               VERSIONS="${GITHUB_REF#refs/tags/v}"
-              export MORELLOIE_VERSION="$(echo $VERSIONS | cut -d+ -f 1)"
-              export MORELLO_LLVM_VERSION="$(echo $VERSIONS | cut -d+ -f 2)"
-              export MUSL_VERSION="$(echo $VERSIONS | cut -d+ -f 3)"
+              export MORELLOIE_VERSION="$(echo $VERSIONS | cut -d '_' -f 1)"
+              export MORELLO_LLVM_VERSION="$(echo $VERSIONS | cut -d '_' -f 2)"
+              export MUSL_VERSION="$(echo $VERSIONS | cut -d '_' -f 3)"
               ;;
             *)
               MORELLOIE_FILENAME="$(curl -fsSL "https://developer.arm.com/downloads/-/morello-instruction-emulator" | grep -o -e 'Download morelloie-.*.sh' | cut -d ' ' -f 2 | sort -nr | head -n1)"
